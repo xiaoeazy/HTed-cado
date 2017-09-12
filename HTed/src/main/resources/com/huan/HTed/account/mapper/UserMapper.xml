@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huan.HTed.account.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.huan.HTed.account.dto.User" extends="com.huan.HTed.mapper.StdMapper.STD">
+        <id column="USER_ID" property="userId" jdbcType="DECIMAL" />
+        <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+        <result column="PASSWORD_ENCRYPTED" property="passwordEncrypted" jdbcType="VARCHAR" />
+        <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+        <result column="PHONE" property="phone" jdbcType="VARCHAR" />
+        <result column="START_ACTIVE_DATE" property="startActiveDate" javaType="DATE"/>
+        <result column="END_ACTIVE_DATE" property="endActiveDate" javaType="DATE"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR" />
+        <result column="LAST_PASSWORD_UPDATE_DATE" property="lastPasswordUpdateDate" javaType="DATE"/>
+        <result column="LAST_LOGIN_DATE" property="lastLoginDate" javaType="DATE"/>
+    </resultMap>
+
+    
+    <sql id="Base_Column_List">
+        USER_ID, USER_NAME,PASSWORD_ENCRYPTED, USER_TYPE, EMAIL, PHONE, START_ACTIVE_DATE,
+        END_ACTIVE_DATE, STATUS,LAST_PASSWORD_UPDATE_DATE,LAST_LOGIN_DATE
+    </sql>
+    <update id="updatePassword">
+        update sys_user u
+        set u.password_encrypted = #{password,jdbcType=VARCHAR}
+        where u.user_id = #{userId,jdbcType=DECIMAL}
+    </update>
+    
+    <update id="updatePasswordDate">
+        update sys_user u
+        set u.LAST_PASSWORD_UPDATE_DATE = current_timestamp
+        where u.user_id = #{userId,jdbcType=DECIMAL}
+    </update>
+
+    <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select 
+        <include refid="Base_Column_List" />,
+        <include refid="com.huan.HTed.mapper.StdMapper.Base_Column_List"/>
+        from SYS_USER
+        where upper(USER_NAME) = upper(#{userName,jdbcType=VARCHAR})
+    </select>
+    
+    <select id="selectByIdList" resultMap="BaseResultMap">
+        select
+        USER_ID, EMAIL, USER_NAME
+        from SYS_USER
+        where USER_ID in
+        <foreach collection="list" open="(" separator="," close=")" item="userId" index="index">
+            #{userId,jdbcType=DECIMAL}
+        </foreach>
+    </select>
+
+</mapper>

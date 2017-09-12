@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+    <bean id="jacksonObjectMapper" class="com.huan.HTed.core.json.JacksonMapper" >
+
+    </bean>
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" ref="jacksonObjectMapper" />
+        <property name="targetMethod" value="configure" />
+        <property name="arguments">
+            <list>
+                <value type="com.fasterxml.jackson.databind.DeserializationFeature">FAIL_ON_UNKNOWN_PROPERTIES</value>
+                <value>false</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Enables the Spring MVC @Controller programming model -->
+	<!-- <mvc:annotation-driven /> -->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper">
+                    <ref bean="jacksonObjectMapper"/>
+                </property>
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+
+    <bean id="validator" class="com.huan.HTed.core.validator.ComplexCommonValidator"/>
+
+    <mvc:resources mapping="/lib/**" location="/lib/" />
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+    <mvc:resources mapping="/editor-app/**" location="/resources/editor-app/" />
+    <mvc:resources mapping="/diagram-viewer/**" location="/resources/diagram-viewer/" />
+
+ 	<mvc:view-controller path="/login.html" view-name="/login" />
+ 	<mvc:view-controller path="/index" view-name="redirect:/" />
+
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+	   <property name="templateLoaderPaths">
+            <list>
+                <value>/WEB-INF/view</value>
+            </list>
+        </property>
+		<!-- <property name="templateLoaderPath" value="/WEB-INF/screen" /> -->
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="auto_import">spring.ftl as spring</prop>
+				<prop key="template_update_delay">2</prop><!-- 模板更新检查时间(秒) -->
+				<prop key="number_format">#</prop>
+				<prop key="date_format">yyyy-MM-dd</prop>
+                <prop key="time_format">HH:mm:ss</prop>
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+               <!--  <prop key="classic_compatible">true</prop> -->
+			</props>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="viewClass" value="com.huan.HTed.core.web.DefaultFreeMarkerView" />
+        <property name="cache" value="false" />
+        <property name="suffix" value=".html" />
+        <property name="contentType" value="text/html;charset=UTF-8" />
+        <property name="requestContextAttribute" value="base"/>
+        <property name="exposeRequestAttributes" value="true" />
+        <property name="exposeSessionAttributes" value="true" />
+        <property name="exposeSpringMacroHelpers" value="true" />
+        <property name="allowSessionOverride" value="true"/>
+    </bean>
+
+    <bean  class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" >
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/html;charset=UTF-8</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+<!-- 	<bean id="messageSource" class="com.huan.HTed.core.i18n.CacheMessageSource"></bean> 待定-->
+
+	<bean id="themeSource" class="org.springframework.ui.context.support.ResourceBundleThemeSource">
+		<property name="basenamePrefix" value="theme." />
+	</bean>
+
+	<!-- Theme Change Interceptor and Resolver definition -->
+	<bean id="themeResolver" class="org.springframework.web.servlet.theme.CookieThemeResolver">
+		<property name="defaultThemeName" value="default" />
+		<property name="cookieName" value="myAppThemeCookie"/>
+		<property name="cookieMaxAge" value="2592000"/>
+	</bean>
+    
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+        <property name="defaultLocale" value="zh_CN"/>
+    </bean>
+    
+
+    <mvc:interceptors>
+		<bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor">
+			<property name="paramName" value="theme" />
+		</bean>
+        <bean class="com.huan.HTed.core.interceptor.MonitorInterceptor"/>
+
+	</mvc:interceptors>
+	
+	
+	<!-- Imports user-defined @Controller beans that process client requests -->
+	<import resource="controllers.xml" />
+
+</beans>
