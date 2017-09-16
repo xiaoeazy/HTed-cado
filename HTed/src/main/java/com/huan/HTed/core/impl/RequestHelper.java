@@ -10,7 +10,6 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.MDC;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import com.huan.HTed.account.dto.Role;
 import com.huan.HTed.core.IRequest;
 import com.huan.HTed.core.IRequestListener;
 
@@ -18,7 +17,6 @@ import com.huan.HTed.core.IRequestListener;
 /**
  * 维护 IRequest 实例.
  * 
- * @author huanghuan
  */
 public final class RequestHelper {
     private static ThreadLocal<IRequest> localRequestContext = new ThreadLocal<>();
@@ -94,7 +92,6 @@ public final class RequestHelper {
         HttpSession session = httpServletRequest.getSession(false);
         if (session != null) {
             requestContext.setUserId((Long) session.getAttribute(IRequest.FIELD_USER_ID));
-            requestContext.setRoleId((Long) session.getAttribute(Role.FIELD_ROLE_ID)); 
             Object roleIds = session.getAttribute(IRequest.FIELD_ALL_ROLE_ID);
             if (roleIds instanceof Long[]) {
                 requestContext.setAllRoleId((Long[]) roleIds);

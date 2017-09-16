@@ -1,0 +1,62 @@
+<#include "../include/header.html">
+<body>
+<div id="page-content">
+	 <form class="form-horizontal">
+	 </form>
+</div>
+
+
+<div style="clear: both;">
+    <div id="grid" style="margin-left:10px"></div>
+</div>
+
+<script>
+var  viewModel = kendo.observable({
+    model: {
+        userName: "姓名",
+        totalAmount: "2170",
+        startDate: "2016-10-01",
+        endDate: "2016-10-07",
+        description: "描述"
+    }
+});
+
+kendo.bind($('#page-content'), viewModel);
+
+
+dataSource = new kendo.data.DataSource({
+    data: [
+        {itemName: "111", price: 30, amount: 21},
+        {itemName: "222", price: 220, amount: 7}
+    ]
+});
+
+var grid = $("#grid").kendoGrid({
+    dataSource: dataSource,
+    navigatable: false,
+    toolbar: [
+        {
+            template: '<span class="btn btn-success" onclick="selectDelegateEmployee()">添加</span>'
+        }, 
+        {
+            template: '<span class="btn btn-default" onclick="closeWin()">删除</span>'
+        }
+    ],
+    resizable: true,
+    scrollable: true,
+    editable: false,
+    rownumber: true,
+    columns: [
+        {field: "itemName", title: '类别名称', width: 80},
+        {
+            field: "price",
+            title: '图片样式',
+            width: 80
+        }
+    ]
+}).data("kendoGrid");
+
+HTed.autoResizeGrid("#grid"); 
+</script>
+
+</body>

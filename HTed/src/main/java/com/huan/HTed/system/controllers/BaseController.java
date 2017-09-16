@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import com.huan.HTed.account.dto.Role;
 import com.huan.HTed.account.dto.User;
 import com.huan.HTed.core.IRequest;
 import com.huan.HTed.core.exception.BaseException;
@@ -301,18 +300,7 @@ public class BaseController {
         return (Long) session.getAttribute(User.FIELD_USER_ID);
     }
 
-    /**
-     * 返回用户角色ID.
-     *
-     * @param request
-     *            HttpServletRequest
-     * @return roleId
-     */
-    protected Long getRoleId(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        return (Long) session.getAttribute(Role.FIELD_ROLE_ID);
-
-    }
+   
 
     /**
      * 返回当前语言编码.

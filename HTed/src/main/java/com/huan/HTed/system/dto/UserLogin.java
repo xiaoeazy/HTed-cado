@@ -8,9 +8,6 @@ import javax.persistence.Table;
 
 import com.huan.HTed.mybatis.annotation.ExtensionAttribute;
 
-/**
- * create by:jialong.zuo@hand-china.com on 2016/10/11.
- */
 
 @Table(name = "sys_user_login")
 @ExtensionAttribute(disable = true)

@@ -76,6 +76,11 @@
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg index="0" name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
+    
+        <!-- 密码加密 PasswordEncoder-->
+    <bean id="passwordManager" class="com.huan.HTed.security.PasswordManager">
+    </bean>
+    
 
     <!-- 线程池 -->
     <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
