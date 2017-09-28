@@ -36,26 +36,29 @@
                             <label class="col-sm-4 control-label">项目路径:</label>
                             <div class="col-sm-8">
                                 <input id="projectPath" type=text data-bind="value:projectPath" style="width:50%"
-                                       class="k-textbox" placeholder="D:/JetBrains/workspaces/hap-parent/hap" required validationMessage="不能为空"/>
+                                       class="k-textbox" placeholder="D:/JetBrains/workspaces/hap-parent/hap" required
+                                       validationMessage="不能为空"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">父目录
+                            <label class="col-sm-4 control-label">父目录路径
                                 :</label>
                             <div class="col-sm-4">
                                 <input id="parentPackagePath" type="text" data-bind="value:parentPackagePath"
-                                       style="width:50%" class="k-textbox" placeholder="com/hand/hap" required validationMessage="不能为空"/>
+                                       style="width:50%" class="k-textbox" placeholder="com/huan/HTed" required
+                                       validationMessage="不能为空"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">package目录:</label>
+                            <label class="col-sm-4 control-label">包路径:</label>
                             <div class="col-sm-4">
                                 <input id="packagePath" type="text" data-bind="value:packagePath" style="width:50%"
-                                       class="k-textbox" placeholder="newpackage" required validationMessage="不能为空"/>
+                                       class="k-textbox" placeholder="newpackage" required
+                                       validationMessage="不能为空"/>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-4 control-label">选择表:</label>
+                            <label class="col-sm-4 control-label">请选择表:</label>
                             <div class="col-sm-4">
                                 <input id="autoComplete" style="width:100%"/>
                             </div>
@@ -68,7 +71,7 @@
                                 <thead>
                                 <tr>
                                     <th style="text-align:center">文件类型</th>
-                                    <th style="text-align:center">文件名称</th>
+                                    <th style="text-align:center">文件名</th>
                                     <th style="text-align:center">是否创建</th>
                                     <th style="text-align:center">是否覆盖</th>
                                     <th style="text-align:center">html模板</th>
@@ -200,7 +203,7 @@
     $("#autoComplete").kendoAutoComplete({
         dataSource: dataSource,
         dataTextField: "text",
-       select: function (e) {
+        select: function (e) {
             getTableName(e.item.text());
         }
     });
@@ -227,9 +230,11 @@
     function getTableName(text) {
         viewModel.set("targetName", text);
         var name = text.substring(text.indexOf("_") + 1);
-        if (text.endsWith("_b") || text.endsWith("_B")) {
+        if (ifEnds(text, "_b") || ifEnds(text, "_B")) {
             name = name.substring(0, name.length - 2)
         }
+        name=name.toLowerCase();
+        var htmlName = name;
         name = name.substring(0, 1).toUpperCase() + name.substring(1);
         name = tocalme(name);
         viewModel.set("dtoName", name + ".java");
@@ -238,7 +243,7 @@
         viewModel.set("mapperXmlName", name + "Mapper.xml");
         viewModel.set("serviceName", "I" + name + "Service.java");
         viewModel.set("implName", name + "ServiceImpl.java");
-        viewModel.set("htmlName", name + ".html");
+        viewModel.set("htmlName", htmlName + ".html");
     }
     function getHtmlModel(value) {
         viewModel.set("htmlModelName", value);
@@ -251,15 +256,19 @@
         });
     }
 
-    function dtochange(){
+    function dtochange() {
         kendo.ui.showConfirmDialog({
-            title: '提示',
-            message: '是否对其余文件名做相应修改?'
-        }).done(function(e) {
-            if(e.button=='OK') {
+        	 title: '提示',
+             message: '是否对其余文件名做相应修改?'
+        }).done(function (e) {
+            if (e.button == 'OK') {
                 var name = $('#DtoName').val();
-                if (name.endsWith('.java')) {
+                if (ifEnds(name, ".java")) {
                     name = name.substring(0, name.indexOf('.'));
+                }
+                var htmlName = name.replace(/([A-Z])/g, "_$1").toLowerCase();
+                if (htmlName.startsWith("_")) {
+                    htmlName = htmlName.substring(1);
                 }
                 viewModel.set("dtoName", name + ".java");
                 viewModel.set("controllerName", name + "Controller.java");
@@ -267,11 +276,20 @@
                 viewModel.set("mapperXmlName", name + "Mapper.xml");
                 viewModel.set("serviceName", "I" + name + "Service.java");
                 viewModel.set("implName", name + "ServiceImpl.java");
-                viewModel.set("htmlName", name + ".html");
+                viewModel.set("htmlName", htmlName + ".html");
             }
         })
     }
 
+    function ifEnds(str, rule) {
+        var a = rule.length;
+        var b = str.length;
+        if (str.substring(b - a - 1, b - 1) == rule) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     function submitform() {
         if (viewModel.get("targetName") === '') {
             kendo.ui.showInfoDialog({
@@ -373,8 +391,9 @@
                         mess = "项目中已存在同名Xml";
                     } else if (data == 7) {
                         mess = "项目中已存在同名Html";
+                    } else if (data == -1) {
+                        mess = "创建失败";
                     }
-
                     kendo.ui.showInfoDialog({
                         message: mess
                     });

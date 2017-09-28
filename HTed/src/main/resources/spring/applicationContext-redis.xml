@@ -78,14 +78,6 @@
 <!--         <property name="loadOnStartUp" value="true"/> -->
 <!--         <property name="sqlId" value="com.huan.HTed.system.mapper.PromptMapper.selectAll"/> -->
 <!--     </bean> -->
-<!--     <bean id="languageCache" class="com.huan.HTed.cache.impl.HashStringRedisCache"> -->
-<!--         <property name="name" value="language"/> -->
-<!--         <property name="type" value="com.huan.HTed.system.dto.Language"/> -->
-<!--         <property name="keyField" value="langCode"/> -->
-<!--         <property name="loadOnStartUp" value="true"/> -->
-<!--         <property name="sqlId" value="com.huan.HTed.system.mapper.LanguageMapper.selectAll"/> -->
-<!--     </bean> -->
-
 <!--     <bean id="functionCache" class="com.huan.HTed.cache.impl.HashStringRedisCacheGroup"> -->
 <!--         <property name="name" value="function"/> -->
 <!--         <property name="type" value="com.huan.HTed.function.dto.Function"/> -->
@@ -94,35 +86,26 @@
 <!--         <property name="loadOnStartUp" value="true"/> -->
 <!--         <property name="sqlId" value="com.huan.HTed.function.mapper.FunctionMapper.selectForCache"/> -->
 <!--     </bean> -->
-<!--     <bean id="roleFunctionCache" class="com.huan.HTed.cache.impl.RoleFunctionCache"> -->
-<!--         <property name="name" value="role_function"/> -->
-<!--     </bean> -->
-<!--     <bean id="roleResourceCache" class="com.huan.HTed.cache.impl.RoleResourceCache"> -->
-<!--         <property name="name" value="role_resource"/> -->
-<!--     </bean> -->
-<!--     <bean id="lovCache" class="com.huan.HTed.cache.impl.LovCache"> -->
-<!--         <property name="name" value="lov"/> -->
-<!--     </bean> -->
 <!--     <bean id="codeCache" class="com.huan.HTed.cache.impl.SysCodeCache"> -->
 <!--         <property name="name" value="code"/> -->
 <!--     </bean> -->
-
-<!--     <bean id="apiCache" class="com.huan.HTed.cache.impl.ApiConfigCache"> -->
-<!--         <property name="name" value="api"/> -->
-<!--     </bean> -->
+	<bean id="configCache" class="com.huan.HTed.cache.impl.HashStringRedisCache">
+        <property name="name" value="webConfig"/>
+        <property name="type" value="java.lang.String"/>
+        <property name="keyField" value="configKey"/>
+        <property name="valueField" value="configValue"/>
+        <property name="loadOnStartUp" value="true"/>
+        <property name="sqlId" value="com.huan.HTed.cado.mapper.WebConfigMapper.selectAll"/>
+    </bean>
 
     <bean id="cacheManager" class="com.huan.HTed.cache.impl.CacheManagerImpl">
         <property name="caches">
             <list>
-<!--                 <ref bean="languageCache"/> -->
 <!--                 <ref bean="promptCache"/> -->
 <!--                 <ref bean="functionCache"/> -->
-<!--                 <ref bean="roleFunctionCache"/> -->
-<!--                 <ref bean="roleResourceCache"/> -->
-<!--                 <ref bean="lovCache"/> -->
 <!--                 <ref bean="codeCache"/> -->
 
-
+				<ref bean="configCache"/>
 <!--                 <bean class="com.huan.HTed.cache.impl.RedisCache"> -->
 <!--                     <property name="name" value="resource_url"/> -->
 <!--                     <property name="type" value="com.huan.HTed.function.dto.Resource"/> -->

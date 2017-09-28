@@ -1,19 +1,8 @@
 package com.huan.HTed.pay.controllers;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.huan.HTed.pay.dto.Payment;
-import com.huan.HTed.pay.utils.MessageUtil;
-import com.huan.HTed.pay.utils.PayUtil;
-import com.huan.HTed.pay.utils.UUIDHexGenerator;
-import com.huan.HTed.pay.utils.WxPayUtil;
 
 import net.minidev.json.JSONObject;
 

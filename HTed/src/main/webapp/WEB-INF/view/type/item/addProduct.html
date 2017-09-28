@@ -1,0 +1,201 @@
+<#include "../../include/header.html">
+<body>
+<script>
+	var typeId = ${RequestParameters.typeId!0};
+	
+	var  viewModel = kendo.observable({
+	    model: {
+	    	typeId:typeId
+	    },
+	    saveFunction: function(){
+	    	 $("#grid2").data('kendoGrid').saveChanges();
+       },
+	    toRight:function(){
+	    	var grid = $("#grid1").data('kendoGrid'); 
+	    	var checked = grid.selectedDataItems();
+	         if(grid.selectedDataItems().length){ 
+	        	  var data = [];
+	        	  $.each(checked, function (k, v) {
+	        		  data.push({
+	        			  			pid:checked[k].pid,
+	        			  			typeId:typeId,
+	        			  			__status:"add"
+	        				  });
+                  });
+	        	  $.ajax({
+		                type   : 'POST',
+		                url    : '${base.contextPath}/type/product/detail/submit',
+		                dataType : "json",
+		                contentType : "application/json",
+		                data   : kendo.stringify(data),
+		                success: function (data) {
+		                	if(data.success==true){
+		                		$('#grid1').data('kendoGrid').dataSource.page(1);
+		                		$('#grid2').data('kendoGrid').dataSource.page(1);
+		                	}else{
+		                		kendo.ui.showErrorDialog({
+		                            message:data.message
+		                        });
+		                	}
+		                }
+		            });
+	         }
+	    },
+	    toLeft:function(){
+	    	var grid = $("#grid2").data('kendoGrid'); 
+	    	var checked = grid.selectedDataItems();
+	         if(grid.selectedDataItems().length){ 
+	        	  var data = [];
+	        	  $.each(checked, function (k, v) {
+	        		  data.push({
+	        			  			pid:checked[k].pid,
+	        			  			typeId:typeId,
+	        			  			__status:"delete"
+	        				  });
+                  });
+	        	  $.ajax({
+		                type   : 'POST',
+		                url    : '${base.contextPath}/type/product/detail/submit',
+		                dataType : "json",
+		                contentType : "application/json",
+		                data   : kendo.stringify(data),
+		                success: function (data) {
+		                	if(data.success==true){
+		                		$('#grid1').data('kendoGrid').dataSource.page(1);
+		                		$('#grid2').data('kendoGrid').dataSource.page(1);
+		                	}else{
+		                		kendo.ui.showErrorDialog({
+		                            message:data.message
+		                        });
+		                	}
+		                }
+		            });
+	         }
+	    }
+	});
+	
+</script>
+<div class="container" style="padding-top: 20px;">
+	<div id="page-content">
+		<div class="row">
+			<div class="col-sm-5">
+				<div id="grid1" style="margin-left: 10px"></div>
+			</div>
+			<div class="col-sm-2 text-center"  style="margin-top:120px">
+				<div class="row"><span  class="btn btn-success" onclick=" viewModel.toRight()" > 添加 </span></div>
+				<div class="row">&nbsp;</div>
+				<div class="row"><span  class="btn btn-success" onclick=" viewModel.toLeft()" > 删除 </span></div>
+			</div>
+			<div class="col-sm-5">
+				<div id="grid2" style="margin-left: 10px"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	
+	kendo.bind($('#page-content'), viewModel);
+	
+	var dataSource1 = new kendo.data.DataSource(
+            {
+                transport: {
+                    read: {
+                        url: '${base.contextPath}/type/product/detail/queryNotHave',
+                        type: "GET",
+                        dataType: "json"
+                    },
+                    parameterMap: function (options, type) {
+                    	if (type !== "read" && options.models) {
+                            var datas = HTed.prepareSubmitParameter(options, type);
+                            return kendo.stringify(datas);
+                        } else if (type === "read") {
+                            return HTed.prepareQueryParameter(viewModel.model.toJSON(), options);
+                        }
+                    }
+                },
+                batch: true,
+                serverPaging: true,
+                schema: {
+                    data: 'rows',
+                    total: 'total',
+                    model: {
+                        id: "pid",
+                        fields:{}
+                    }
+                }
+		});
+		
+		var grid1 = $("#grid1").kendoGrid({
+		dataSource: dataSource1,
+		height:280,
+		navigatable: false,
+		resizable: true,
+		scrollable: true,
+		editable: false,
+		rownumber: false,
+		selectable:"multiple,rowbox",
+		columns: [
+			 {field: "productName", title: '产品名', width: 80},
+			 {field: "price", title: '价钱', width: 80},
+		]
+		}).data("kendoGrid");
+		
+		
+		
+		
+		var dataSource2 = new kendo.data.DataSource(
+	            {
+	                transport: {
+	                    read: {
+	                        url: '${base.contextPath}/type/product/detail/queryHave',
+	                        type: "GET",
+	                        dataType: "json"
+	                    },
+	                    update      : {
+                            url        :"${base.contextPath}/type/product/detail/submit",
+                            contentType: "application/json",
+                            type       : "POST"
+                        },
+	                    parameterMap: function (options, type) {
+		                	if (type !== "read" && options.models) {
+		                        var datas = HTed.prepareSubmitParameter(options, type);
+		                        return kendo.stringify(datas);
+		                    } else if (type === "read") {
+		                        return HTed.prepareQueryParameter(viewModel.model.toJSON(), options);
+		                    }
+		                }
+	                },
+	                batch: true,
+	                serverPaging: true,
+	                schema: {
+	                    data: 'rows',
+	                    total: 'total',
+	                    model: {
+	                        id: "pid",
+	                        fields:{
+	                        	orders:{type:"number",validation: { required: true,min:0}},
+	                        }
+	                    }
+	                }
+			});
+			
+			var grid2 = $("#grid2").kendoGrid({
+			dataSource: dataSource2,
+			height:280,
+			navigatable: false,
+			resizable: true,
+			scrollable: true,
+			editable: false,
+			rownumber: false,
+			selectable:"multiple,rowbox",
+			columns: [
+				 {field: "product.productName", title: '产品名', width: 80},
+				 {field: "product.price", title: '价钱', width: 80},
+			]
+			}).data("kendoGrid");
+			
+</script>
+
+
+
+</body>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huan.HTed.cado.mapper.TypeCardDetailMapper">
+    <resultMap id="BaseResultMap" type="com.huan.HTed.cado.dto.TypeCardDetail">
+        <result column="type_id" property="typeId" jdbcType="DECIMAL" />
+        <result column="card_id" property="cardId" jdbcType="DECIMAL" />
+        <result column="orders" property="orders" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<sql id="Card_Base_Column_List">
+        b.card_id,b.card_name,b.card_image_path
+    </sql>
+    
+    <sql id="Base_Column_List">
+        a.type_id,a.card_id,a.orders,b.card_name,b.card_image_path
+    </sql>
+    
+    
+    
+	 <select id="queryNotHave" resultMap="com.huan.HTed.cado.mapper.CardMapper.BaseResultMap" parameterType="com.huan.HTed.cado.dto.TypeCardDetail" >
+       	SELECT 
+       		<include refid="Card_Base_Column_List" />
+       	FROM  
+       		cado_card b 
+       	WHERE
+      		 b.card_id not in (
+	      		 SELECT 
+	      		 	card_id 
+	      		 from 
+	       		 	cado_type_card_detail 
+	       		 where 
+	       		 	type_id =  #{typeId,jdbcType=DECIMAL}
+     			)
+       		
+    </select>
+    
+    
+    <resultMap  id="ClassResultMap" type="com.huan.HTed.cado.dto.TypeCardDetail" extends="BaseResultMap">
+        <association property="card" column="card_id" javaType="com.huan.HTed.cado.dto.Card">
+            <result property="cardName" column="card_name" />
+            <result property="cardImagePath" column="card_image_path" />
+        </association>
+    </resultMap>
+    
+    <select id="queryHave" resultMap="ClassResultMap" parameterType="com.huan.HTed.cado.dto.TypeCardDetail" >
+       	SELECT 
+       		<include refid="Base_Column_List" />
+       	FROM  
+       		cado_type_card_detail a ,
+       		cado_card b 
+       	<where>
+       			 a.card_id = b.card_id
+       			 <if test="typeId != null">
+       			 	And a.type_id =  #{typeId,jdbcType=DECIMAL}
+       			 </if>
+       	</where>
+       	Order by 
+       		a.orders
+    </select>
+    
+    
+    
+</mapper>

@@ -1,12 +1,16 @@
-package com.huan.HTed.generator.service.impl;
+package com.huan.HTed.generator.dto;
 
 import java.util.List;
+
+import com.huan.HTed.generator.service.impl.XmlColumnsInfo;
 
 
 public class FtlInfo {
     private String fileName;
     private String packageName;
     private List<String> importName;
+
+    private List<XmlColumnsInfo> columnsInfo;
 
     private String dir;
     private String projectPath;
@@ -59,4 +63,13 @@ public class FtlInfo {
     public void setHtmlModelName(String htmlModelName) {
         this.htmlModelName = htmlModelName;
     }
+
+    public List<XmlColumnsInfo> getColumnsInfo() {
+        return columnsInfo;
+    }
+
+    public void setColumnsInfo(List<XmlColumnsInfo> columnsInfo) {
+        this.columnsInfo = columnsInfo;
+    }
+
 }

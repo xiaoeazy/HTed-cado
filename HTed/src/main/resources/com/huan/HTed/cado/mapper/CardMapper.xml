@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huan.HTed.cado.mapper.CardMapper">
+    <resultMap id="BaseResultMap" type="com.huan.HTed.cado.dto.Card">
+        <result column="card_id" property="cardId" jdbcType="DECIMAL" />
+        <result column="card_name" property="cardName" jdbcType="VARCHAR" />
+        <result column="card_image_path" property="cardImagePath" jdbcType="VARCHAR" />
+    </resultMap>
+
+	<sql id="Base_Column_List">
+        card_id,card_name,card_image_path
+    </sql>
+</mapper>

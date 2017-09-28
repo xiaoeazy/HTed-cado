@@ -10,6 +10,8 @@ import com.huan.HTed.core.annotation.StdWho;
 public interface IBaseService<T> {
 
     List<T> select(IRequest request, T condition, int pageNum, int pageSize);
+    
+    List<T> select(IRequest request, T condition);
 
     T insert(IRequest request, @StdWho T record);
 

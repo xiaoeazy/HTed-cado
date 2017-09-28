@@ -1,0 +1,168 @@
+<#include "../include/header.html">
+<body>
+
+	<script>
+		var  viewModel = kendo.observable({
+		    model: {
+		    },
+		    addFunction:function(){
+		    	 var url="./item/product_addAndEdit.html";
+		    	 var dialog =  $("#dialog").kendoWindow({
+		             	actions: [ "Maximize", "Minimize", "Close"],
+		                width: 800,
+		                height: 200,
+		                title: '编辑', 
+		                content: url,                  
+		                iframe:  true,
+		                visible: false,
+		                modal:true,
+		                close: function() {
+			                //window 关闭  刷新 本页面的  grid 
+			                $('#grid').data('kendoGrid').dataSource.page(1);
+		                }
+		             }).data("kendoWindow");
+		             dialog.center().open();
+		    },
+		    editFunction:function(){
+		    	var grid = $("#grid").data('kendoGrid'); 
+		    	var checked = grid.selectedDataItems();
+		         if(grid.selectedDataItems().length==1){  
+		        	 var pid = checked[0].pid;
+		        	 var url="./item/product_addAndEdit.html?pid=" + pid;
+			    	 var dialog =  $("#dialog").kendoWindow({
+			             	actions: [ "Maximize", "Minimize", "Close"],
+			                width: 800,
+			                height: 200,
+			                title: '编辑', 
+			                content: url,                  
+			                iframe:  true,
+			                visible: false,
+			                modal:true,
+			                close: function() {
+				                //window 关闭  刷新 本页面的  grid 
+				                $('#grid').data('kendoGrid').dataSource.page(1);
+			                }
+			             }).data("kendoWindow");
+			             dialog.center().open();
+		         }
+		    	
+		    },
+		    deleteFunction:function(){
+		    	
+		    	var checked = grid.selectedDataItems();
+		         if(grid.selectedDataItems().length){
+		        		kendo.ui.showConfirmDialog({
+				        	title:'提示',
+				        	message: '是否要删除'
+				        }).done(function (event) {
+				            if (event.button == 'OK') {
+				            	var data = [];
+			            	 	$.each(checked,function(i,v){
+			            	 		data.push({
+			            	 			pid:checked[i].pid
+			            	 		});
+			                    })
+				            	$.ajax({
+					                type   : 'POST',
+					                url    : '${base.contextPath}/product/delete',
+					                dataType : "json",
+					                contentType : "application/json",
+					                data   : kendo.stringify(data),
+					                success: function (data) {
+					                	if(data.success==false){
+					                		kendo.ui.showErrorDialog({
+					                            message:data.message
+					                        });
+					                	}	
+					                	else{
+					                        window.parent.$("#dialog").data("kendoWindow").close();
+					                    }
+					                }
+					            });
+				            	
+				            }
+				        }) 
+			    }
+		    }
+		});
+	</script>
+	<div id="page-content">
+		<form class="form-horizontal"></form>
+	</div>
+
+	<div id="dialog"></div>
+	<div style="clear: both;">
+		<div id="grid" style="margin-left: 10px"></div>
+	</div>
+
+	<script>
+	
+	kendo.bind($('#page-content'), viewModel);
+	dataSource = new kendo.data.DataSource(
+                {
+                    transport: {
+                        read: {
+                            url: '${base.contextPath}/product/query',
+                            type: "GET",
+                            dataType: "json"
+                        },
+                        parameterMap: function (options, type) {
+                            if (type === "read") {
+                                var map = viewModel.model.toJSON();
+                                map.start = (options.page - 1) * options.pageSize;
+                                map.size = options.pageSize;
+                                for (var k in map) {
+                                    if (map[k] === '' || map[k] === null || map[k] === undefined)
+                                        delete map[k]
+                                }
+                                return map;
+                            }
+                        }
+                    },
+                    batch: true,
+                    serverPaging: true,
+                    pageSize: 10,
+                    schema: {
+                        data: 'rows',
+                        total: 'total',
+                        model: {
+                            id: "cardId",
+                            fields:{}
+                        }
+                    }
+});
+
+var grid = $("#grid").kendoGrid({
+    dataSource: dataSource,
+    navigatable: false,
+    toolbar: [
+        {
+            template: '<span class="btn btn-success" onclick=" viewModel.addFunction()">添加</span> '
+        }, 
+        {
+            template: '<span class="btn btn-success" onclick=" viewModel.editFunction()">修改</span> '
+        },
+        {
+            template: '<span class="btn btn-success" onclick="viewModel.deleteFunction()">删除</span> '
+        }
+    ],
+    resizable: true,
+    scrollable: true,
+    editable: false,
+    rownumber: false,
+    selectable:"multiple,rowbox",
+    pageable: {
+        pageSizes: [5, 10, 20, 50],
+        refresh: true,
+        buttonCount: 5
+    },
+    columns: [
+        {field: "productName", title: '产品名称', width: 80},
+        {field: "price", title: '价钱', width: 80}
+    ]
+}).data("kendoGrid");
+
+HTed.autoResizeGrid("#grid"); 
+</script>
+
+</body>

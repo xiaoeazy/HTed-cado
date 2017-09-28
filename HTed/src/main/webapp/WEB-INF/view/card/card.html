@@ -1,34 +1,122 @@
 <#include "../include/header.html">
 <body>
-<div id="page-content">
-	 <form class="form-horizontal">
-	 </form>
-</div>
+	<script>
+	var  viewModel = kendo.observable({
+	    model: {
+	    	
+	    },
+        addFunction:function(){
+	    	 var url="./item/card_addAndEdit.html";
+	    	 var dialog =  $("#dialog").kendoWindow({
+	             	actions: [ "Maximize", "Minimize", "Close"],
+	                width: 800,
+	                height: 500,
+	                title: '编辑', 
+	                content: url,                  
+	                iframe:  true,
+	                visible: false,
+	                modal:true,
+	                close: function() {
+		                //window 关闭  刷新 本页面的  grid 
+		                $('#grid').data('kendoGrid').dataSource.page(1);
+	                }
+	             }).data("kendoWindow");
+	             dialog.center().open();
+	    },
+	    editFunction:function(){
+	    	var grid = $("#grid").data('kendoGrid'); 
+	    	var checked = grid.selectedDataItems();
+	         if(grid.selectedDataItems().length==1){  
+	        	 var cardId = checked[0].cardId;
+	        	 var url="./item/card_addAndEdit.html?cardId=" + cardId;
+		    	 var dialog =  $("#dialog").kendoWindow({
+		             	actions: [ "Maximize", "Minimize", "Close"],
+		                width: 800,
+		                height: 500,
+		                title: '编辑', 
+		                content: url,                  
+		                iframe:  true,
+		                visible: false,
+		                modal:true,
+		                close: function() {
+			                //window 关闭  刷新 本页面的  grid 
+			                $('#grid').data('kendoGrid').dataSource.page(1);
+		                }
+		             }).data("kendoWindow");
+		             dialog.center().open();
+	         }
+	    	
+	    },
+	    deleteFunction:function(){
+//		    	kendo.ui.showConfirmDialog({
+//		        	title:$l('hap.tip.info'),
+//		        	message: $l('hap.tip.delete_confirm')
+//		        }).done(function (event) {
+//		            if (event.button == 'OK') {
+//		            	$.each(checked,function(i,v){
+//		            		grid.dataSource.remove(v)
+//		            	})
+//		                grid.dataSource.sync();
+//		            }
+//		        }) 
+	    }
+	});
+	
+	
+	</script>
+	<div id="page-content">
+		<form class="form-horizontal"></form>
+	</div>
+
+	<div id="dialog"></div>
+	<div style="clear: both;">
+		<div id="grid" style="margin-left: 10px"></div>
+	</div>
+
+	<script>
+	
+	kendo.bind($('#page-content'), viewModel);
 
 
-<div style="clear: both;">
-    <div id="grid" style="margin-left:10px"></div>
-</div>
+// dataSource = new kendo.data.DataSource({
+//     data: [
+//         {itemName: "111", price: 30, amount: 21},
+//         {itemName: "222", price: 220, amount: 7}
+//     ]
+// });
 
-<script>
-var  viewModel = kendo.observable({
-    model: {
-        userName: "姓名",
-        totalAmount: "2170",
-        startDate: "2016-10-01",
-        endDate: "2016-10-07",
-        description: "描述"
-    }
-});
-
-kendo.bind($('#page-content'), viewModel);
-
-
-dataSource = new kendo.data.DataSource({
-    data: [
-        {itemName: "111", price: 30, amount: 21},
-        {itemName: "222", price: 220, amount: 7}
-    ]
+	dataSource = new kendo.data.DataSource(
+                {
+                    transport: {
+                        read: {
+                            url: '${base.contextPath}/card/queryByCard',
+                            type: "GET",
+                            dataType: "json"
+                        },
+                        parameterMap: function (options, type) {
+                            if (type === "read") {
+                                var map = viewModel.model.toJSON();
+                                map.start = (options.page - 1) * options.pageSize;
+                                map.size = options.pageSize;
+                                for (var k in map) {
+                                    if (map[k] === '' || map[k] === null || map[k] === undefined)
+                                        delete map[k]
+                                }
+                                return map;
+                            }
+                        }
+                    },
+                    batch: true,
+                    serverPaging: true,
+                    pageSize: 10,
+                    schema: {
+                        data: 'rows',
+                        total: 'total',
+                        model: {
+                            id: "cardId",
+                            fields:{}
+                        }
+                    }
 });
 
 var grid = $("#grid").kendoGrid({
@@ -36,22 +124,33 @@ var grid = $("#grid").kendoGrid({
     navigatable: false,
     toolbar: [
         {
-            template: '<span class="btn btn-success" onclick="selectDelegateEmployee()">添加</span>'
+            template: '<span class="btn btn-success" onclick=" viewModel.addFunction()">添加</span> '
         }, 
         {
-            template: '<span class="btn btn-default" onclick="closeWin()">删除</span>'
+            template: '<span class="btn btn-success" onclick=" viewModel.editFunction()">修改</span> '
+        },
+        {
+            template: '<span class="btn btn-success" onclick="viewModel.deleteFunction()">删除</span> '
         }
     ],
     resizable: true,
     scrollable: true,
     editable: false,
-    rownumber: true,
+    rownumber: false,
+    selectable:"multiple,rowbox",
+    pageable: {
+        pageSizes: [5, 10, 20, 50],
+        refresh: true,
+        buttonCount: 5
+    },
     columns: [
-        {field: "itemName", title: '类别名称', width: 80},
+        {field: "cardName", title: '卡片名称', width: 80},
         {
-            field: "price",
-            title: '图片样式',
-            width: 80
+            title: '卡片地址',
+            width: 80,
+            template: function(dataItem){
+            	return "<span><img src='"+dataItem.cardImagePath+"' width=\"150px\" height=\"100px\"/></span>" ;
+            }
         }
     ]
 }).data("kendoGrid");

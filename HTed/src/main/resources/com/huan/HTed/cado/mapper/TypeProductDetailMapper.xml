@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huan.HTed.cado.mapper.TypeProductDetailMapper">
+    <resultMap id="BaseResultMap" type="com.huan.HTed.cado.dto.TypeProductDetail">
+        <result column="type_id" property="typeId" jdbcType="DECIMAL" />
+        <result column="pid" property="pid" jdbcType="DECIMAL" />
+        <result column="orders" property="orders" jdbcType="DECIMAL" />
+    </resultMap>
+
+	<delete id="deleteByPidList" parameterType="java.util.List">
+	    delete from cado_type_product_detail
+	    where pid in
+	    <foreach item="pid" collection="list" open="(" close=")" separator=",">
+            #{pid}
+         </foreach>
+  </delete>
+  
+  
+  	<sql id="Product_Base_Column_List">
+        b.pid,b.product_name,b.price
+    </sql>
+    
+    <sql id="Base_Column_List">
+        a.type_id,a.pid,a.orders,b.product_name,b.price
+    </sql>
+    
+    
+    
+	 <select id="queryNotHave" resultMap="com.huan.HTed.cado.mapper.ProductMapper.BaseResultMap" parameterType="com.huan.HTed.cado.dto.TypeProductDetail" >
+       	SELECT 
+       		<include refid="Product_Base_Column_List" />
+       	FROM  
+       		cado_product b 
+       	WHERE
+      		 b.pid not in (
+	      		 SELECT 
+	      		 	pid 
+	      		 from 
+	       		 	cado_type_product_detail 
+	       		 where 
+	       		 	type_id =  #{typeId,jdbcType=DECIMAL}
+     			)
+       		
+    </select>
+    
+    
+    <resultMap  id="ClassResultMap" type="com.huan.HTed.cado.dto.TypeProductDetail" extends="BaseResultMap">
+        <association property="product" column="pid" javaType="com.huan.HTed.cado.dto.Product">
+            <result property="productName" column="product_name" />
+            <result property="price" column="price" />
+        </association>
+    </resultMap>
+    
+    <select id="queryHave" resultMap="ClassResultMap" parameterType="com.huan.HTed.cado.dto.TypeProductDetail" >
+       	SELECT 
+       		<include refid="Base_Column_List" />
+       	FROM  
+       		cado_type_product_detail a ,
+       		cado_product b 
+       	<where>
+       			 a.pid = b.pid
+       			 <if test="typeId != null">
+       			 	And a.type_id =  #{typeId,jdbcType=DECIMAL}
+       			 </if>
+       	</where>
+       	Order by 
+       		a.orders
+    </select>
+</mapper>

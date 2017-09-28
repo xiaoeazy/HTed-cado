@@ -1,0 +1,132 @@
+<#include "../../include/header.html">
+<body>
+<script>
+	var cardId = '${RequestParameters.cardId!0}';
+	if (cardId!=0) {
+	    $.ajax({
+	        url: '${base.contextPath}/card/query?cardId='+cardId,
+	        success: function (args) {
+	            var a0 = args.rows[0] || {};
+	            for (var k in a0) {
+	            	if(k === "cardImagePath"){
+	            		var cardImagePath = a0.cardImagePath;
+	            		var path = "${base.contextPath}"+cardImagePath;
+	            		$("#cardImagePathShow").attr('src',path); 
+	            		viewModel.model.set(k, a0[k]);
+	            	}else{
+	            		viewModel.model.set(k, a0[k]);
+	            	}
+	                  
+	            }
+	        }
+	    });
+	}
+	
+	
+	var  viewModel = kendo.observable({
+	    model: {
+	    },
+	    save:function(){
+	    	var data= viewModel.model.toJSON();
+	    	if(data.cardId){
+	    		data.__status = "update";
+	    	}else{
+	    		data.__status = "add";
+	    	}
+	
+	    	var validator = $("#mainform").kendoValidator().data("kendoValidator");
+			if (validator.validate()) {
+		    	$.ajax({
+	                type   : 'POST',
+	                url    : '${base.contextPath}/card/submit',
+	                dataType : "json",
+	                contentType : "application/json",
+	                data   : kendo.stringify([data]),
+	                success: function (data) {
+	                	if(data.success==false){
+	                		kendo.ui.showErrorDialog({
+	                            message:data.message
+	                        });
+	                	}	
+	                	else{
+	                        window.parent.$("#dialog").data("kendoWindow").close();
+	                    }
+	                }
+	            });
+			}
+	    },
+	    reset:function(){
+	    	 	var formData = viewModel.model.toJSON();
+	            for (var k in formData) {
+	                viewModel.model.set(k, null);
+	            }
+	    }
+	});
+	
+	function imgClick(){
+		 var url="../../upload/upload.html";
+    	 var dialog =  $("#dialog").kendoWindow({
+             	actions: [ "Maximize", "Minimize", "Close"],
+                width: 400,
+                height: 450,
+                title: '编辑', 
+                content: url,                  
+                iframe:  true,
+                visible: false,
+                modal:true,
+                close: function() {
+                }
+             }).data("kendoWindow");
+             dialog.center().open();
+	}
+	
+</script>
+<div id="dialog"></div>
+<div class="container" style="margin-top: 20px;">
+	<div id="page-content">
+	<form id="mainform"  class="form-horizontal" method="post" enctype="application/json;charset=UTF-8">
+	
+	<div class="row">
+	  <div class="form-group">
+	 	
+	 	<div class="col-sm-11" style="float: left;margin-top: 0px;">
+    		<div class="form-group">
+	            <label class="col-sm-2 control-label">名称:</label>
+	            <div class="col-sm-4">
+	                <input type="text" required style="width:100%" name="cardName" data-bind="value:model.cardName" class="k-textbox">
+	            </div>
+	            <div class="col-sm-6" >  
+	                 <span data-for="cardName" class=".k-invalid-msg"></span>
+	            </div>
+	        </div>
+	       
+    	</div>
+   		<div class="col-sm-11" style="float: left;margin-top: 0px;">
+    	 	<div class="form-group">
+    	 		<label class="col-sm-2 control-label">图片:</label>
+		        <div class="col-sm-5">
+		        		<img id="cardImagePathShow" src="" width="150px" height="100px" onclick="imgClick()"/>
+		        		<input type="text"  style="width:100%" name="cardImagePath" data-bind="value:model.cardImagePath" class="k-textbox">
+		 		</div>
+		 	 </div>
+		 </div>
+	  </div>
+	</div>
+	<div class="text-right" style="bottom: 20px;position: fixed; right: 85px; float: left; background: #fff;">
+    	<span class="btn btn-success" data-bind="click:save" type="submit">保存</span>
+    	<span class="btn btn-success" data-bind="click:reset" type="button">重置</span>
+	</div>
+
+	</form>
+	</div>
+</div>
+<script>
+	
+	kendo.bind($('#page-content'), viewModel);
+	
+	
+</script>
+
+
+
+</body>

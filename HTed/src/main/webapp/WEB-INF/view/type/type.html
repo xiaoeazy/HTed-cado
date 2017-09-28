@@ -1,0 +1,203 @@
+<#include "../include/header.html">
+<body>
+	<script>
+	var  viewModel = kendo.observable({
+	    model: {
+	    	
+	    },
+        addFunction:function(){
+	    	 var url="./item/type_addAndEdit.html";
+	    	 var dialog =  $("#dialogAdd").kendoWindow({
+	             	actions: [ "Maximize", "Minimize", "Close"],
+	                width: 800,
+	                height: 400,
+	                title: '编辑', 
+	                content: url,                  
+	                iframe:  true,
+	                visible: false,
+	                modal:true,
+	                close: function() {
+		                //window 关闭  刷新 本页面的  grid 
+		                $('#grid').data('kendoGrid').dataSource.page(1);
+	                }
+	             }).data("kendoWindow");
+	             dialog.center().open();
+	    },
+	    editFunction:function(){
+	    	var grid = $("#grid").data('kendoGrid'); 
+	    	var checked = grid.selectedDataItems();
+	         if(grid.selectedDataItems().length==1){  
+	        	 var typeId = checked[0].typeId;
+	        	 var url="./item/type_addAndEdit.html?typeId=" + typeId;
+		    	 var dialog =  $("#dialogUpdate").kendoWindow({
+		             	actions: [ "Maximize", "Minimize", "Close"],
+		                width: 800,
+		                height: 400,
+		                title: '编辑', 
+		                content: url,                  
+		                iframe:  true,
+		                visible: false,
+		                modal:true,
+		                close: function() {
+			                //window 关闭  刷新 本页面的  grid 
+			                $('#grid').data('kendoGrid').dataSource.page(1);
+		                }
+		             }).data("kendoWindow");
+		             dialog.center().open();
+	         }
+	    	
+	    },
+	    addCardFunction:function(){
+	    	var grid = $("#grid").data('kendoGrid'); 
+	    	var checked = grid.selectedDataItems();
+	         if(grid.selectedDataItems().length==1){  
+	        	 var typeId = checked[0].typeId;
+	        	 var url="./item/addCard.html?typeId=" + typeId;
+		    	 var dialog =  $("#dialogCard").kendoWindow({
+		             	actions: [ "Maximize", "Minimize", "Close"],
+		                width: 800,
+		                height: 600,
+		                title: '卡片管理', 
+		                content: url,                  
+		                iframe:  true,
+		                visible: false,
+		                modal:true,
+		                close: function() {
+			                //window 关闭  刷新 本页面的  grid 
+			                $('#grid').data('kendoGrid').dataSource.page(1);
+		                }
+		             }).data("kendoWindow");
+		             dialog.center().open();
+	         }
+	    },
+	    addProductFunction:function(){
+	    	var grid = $("#grid").data('kendoGrid'); 
+	    	var checked = grid.selectedDataItems();
+	         if(grid.selectedDataItems().length==1){  
+	        	 var typeId = checked[0].typeId;
+	        	 var url="./item/addProduct.html?typeId=" + typeId;
+		    	 var dialog =  $("#dialogProduct").kendoWindow({
+		             	actions: [ "Maximize", "Minimize", "Close"],
+		                width: 800,
+		                height: 350,
+		                title: '产品管理', 
+		                content: url,                  
+		                iframe:  true,
+		                visible: false,
+		                modal:true,
+		                close: function() {
+			                //window 关闭  刷新 本页面的  grid 
+			                $('#grid').data('kendoGrid').dataSource.page(1);
+		                }
+		             }).data("kendoWindow");
+		             dialog.center().open();
+	         }
+	    },
+	    deleteFunction:function(){
+//		    	kendo.ui.showConfirmDialog({
+//		        	title:$l('hap.tip.info'),
+//		        	message: $l('hap.tip.delete_confirm')
+//		        }).done(function (event) {
+//		            if (event.button == 'OK') {
+//		            	$.each(checked,function(i,v){
+//		            		grid.dataSource.remove(v)
+//		            	})
+//		                grid.dataSource.sync();
+//		            }
+//		        }) 
+	    }
+	});
+	
+	
+	</script>
+	<div id="page-content">
+		<form class="form-horizontal"></form>
+	</div>
+
+	<div id="dialogAdd"></div>
+	<div id="dialogUpdate"></div>
+	<div id="dialogCard"></div>
+	<div id="dialogProduct"></div>
+	<div style="clear: both;">
+		<div id="grid" style="margin-left: 10px"></div>
+	</div>
+
+	<script>
+	
+	kendo.bind($('#page-content'), viewModel);
+
+
+	dataSource = new kendo.data.DataSource(
+                {
+                    transport: {
+                        read: {
+                            url: '${base.contextPath}/type/query',
+                            type: "GET",
+                            dataType: "json"
+                        },
+                        parameterMap: function (options, type) {
+                            if (type === "read") {
+                                var map = viewModel.model.toJSON();
+                                map.start = (options.page - 1) * options.pageSize;
+                                map.size = options.pageSize;
+                                for (var k in map) {
+                                    if (map[k] === '' || map[k] === null || map[k] === undefined)
+                                        delete map[k]
+                                }
+                                return map;
+                            }
+                        }
+                    },
+                    batch: true,
+                    serverPaging: true,
+                    pageSize: 10,
+                    schema: {
+                        data: 'rows',
+                        total: 'total',
+                        model: {
+                            id: "typeId",
+                            fields:{}
+                        }
+                    }
+});
+
+var grid = $("#grid").kendoGrid({
+    dataSource: dataSource,
+    navigatable: false,
+    toolbar: [
+        {
+            template: '<span class="btn btn-success" onclick=" viewModel.addFunction()">添加</span> '
+        }, 
+        {
+            template: '<span class="btn btn-success" onclick=" viewModel.editFunction()">修改</span> '
+        },
+        {
+            template: '<span class="btn btn-success" onclick="viewModel.deleteFunction()">删除</span> '
+        },
+        {
+            template: '<span class="btn btn-success" onclick="viewModel.addCardFunction()">卡片类型</span> '
+        },
+        {
+            template: '<span class="btn btn-success" onclick="viewModel.addProductFunction()">产品类型</span> '
+        }
+        
+    ],
+    resizable: true,
+    scrollable: true,
+    editable: false,
+    rownumber: false,
+    selectable:"multiple,rowbox",
+    pageable: {
+        pageSizes: [5, 10, 20, 50],
+        refresh: true,
+        buttonCount: 5
+    },
+    columns: [
+        {field: "typeName", title: '大类名称', width: 80}
+    ]
+}).data("kendoGrid");
+
+HTed.autoResizeGrid("#grid"); 
+</script>
+
+</body>

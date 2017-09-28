@@ -3,18 +3,18 @@
     "msg": "ok",
     "data": [
         {
-            "name": "H+交流群",
+            "name": "交流群",
             "nums": 36,
             "id": 1,
             "item": [
                 {
                     "id": "101",
-                    "name": "H+ Bug反馈",
+                    "name": " Bug反馈",
                     "face": "http://tp2.sinaimg.cn/2211874245/180/40050524279/0"
                 },
                 {
                     "id": "102",
-                    "name": "H+ 技术交流",
+                    "name": " 技术交流",
                     "face": "http://tp3.sinaimg.cn/1820711170/180/1286855219/1"
                 }
             ]

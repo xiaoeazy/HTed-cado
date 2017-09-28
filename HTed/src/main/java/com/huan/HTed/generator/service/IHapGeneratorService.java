@@ -1,8 +1,8 @@
 package com.huan.HTed.generator.service;
 
-import com.huan.HTed.generator.service.impl.GeneratorInfo;
-
 import java.util.List;
+
+import com.huan.HTed.generator.dto.GeneratorInfo;
 
 
 public interface IHapGeneratorService {

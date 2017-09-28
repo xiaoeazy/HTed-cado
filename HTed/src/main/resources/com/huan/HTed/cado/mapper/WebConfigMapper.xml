@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huan.HTed.cado.mapper.WebConfigMapper">
+    <resultMap id="BaseResultMap" type="com.huan.HTed.cado.dto.WebConfig">
+        <result column="config_id" property="configId" jdbcType="DECIMAL" />
+        <result column="config_key" property="configKey" jdbcType="VARCHAR" />
+        <result column="config_value" property="configValue" jdbcType="VARCHAR" />
+        <result column="config_commit" property="configCommit" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+</mapper>

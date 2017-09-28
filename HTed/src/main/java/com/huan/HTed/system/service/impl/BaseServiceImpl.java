@@ -28,6 +28,12 @@ public abstract class BaseServiceImpl<T> implements IBaseService<T> {
         PageHelper.startPage(pageNum, pageSize);
         return mapper.select(condition);
     }
+    
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public List<T> select(IRequest request, T condition) {
+        return mapper.select(condition);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)

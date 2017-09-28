@@ -116,8 +116,15 @@
     <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
         <property name="defaultLocale" value="zh_CN"/>
     </bean>
-    
-
+    <!-- 上传文件 --> 
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+	    <property name="defaultEncoding" value="utf-8"/>  
+	    <!-- 最大内存大小 -->  
+	    <property name="maxInMemorySize" value="10240"/>  
+	    <!-- 最大文件大小，-1为不限制大小 -->  
+	    <property name="maxUploadSize" value="-1"/>  
+	</bean>  
+	
     <mvc:interceptors>
 		<bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor">
 			<property name="paramName" value="theme" />

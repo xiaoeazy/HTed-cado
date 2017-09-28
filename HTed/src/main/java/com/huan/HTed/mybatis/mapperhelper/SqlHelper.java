@@ -564,7 +564,7 @@ public class SqlHelper {
         StringBuilder sql = new StringBuilder();
         if (BaseDTO.class.isAssignableFrom(entityClass)) {
             sql.append(
-                    "<bind name=\"__orderByClause\" value=\"@com.huan.ted.mybatis.util.OGNL@getOrderByClause(_parameter)\"/>");
+                    "<bind name=\"__orderByClause\" value=\"@com.huan.HTed.mybatis.util.OGNL@getOrderByClause(_parameter)\"/>");
             sql.append("<if test=\"__orderByClause!=null\">");
             sql.append("ORDER BY ${__orderByClause}");
             sql.append("</if>");
@@ -582,7 +582,7 @@ public class SqlHelper {
         StringBuilder sql = new StringBuilder();
         if (BaseDTO.class.isAssignableFrom(entityClass)) {
             sql.append(
-                    "<bind name=\"__orderByClause\" value=\"@com.huan.ted.mybatis.util.OGNL@getOrderByClause_TL(_parameter)\"/>");
+                    "<bind name=\"__orderByClause\" value=\"@com.huan.HTed.mybatis.util.OGNL@getOrderByClause_TL(_parameter)\"/>");
             sql.append("<if test=\"__orderByClause!=null\">");
             sql.append("ORDER BY ${__orderByClause}");
             sql.append("</if>");

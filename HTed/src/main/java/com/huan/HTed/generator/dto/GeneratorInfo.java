@@ -1,4 +1,4 @@
-package com.huan.HTed.generator.service.impl;
+package com.huan.HTed.generator.dto;
 
 /**
  * Created by zjl on 2016/10/28.
@@ -13,7 +13,6 @@ public class GeneratorInfo {
     private String targetName;
 
     private String htmlModelName;
-
 
     String controllerStatus;
     String controllerName;

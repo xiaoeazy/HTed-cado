@@ -40,7 +40,6 @@ import com.huan.HTed.system.dto.DTOClassInfo;
  * <p>
  * 从 request 中 copy MDC property 到 真正的 MDC
  * 
- * @author huanghuan
  */
 public class ServiceExecutionAdvice implements MethodInterceptor {
 

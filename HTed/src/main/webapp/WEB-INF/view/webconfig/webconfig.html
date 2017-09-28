@@ -1,0 +1,89 @@
+<#include "../include/header.html">
+<body>
+	<script>
+	var  viewModel = kendo.observable({
+	    model: {
+	    	
+	    },
+	    saveFunction: function(){
+	    	 $("#grid").data('kendoGrid').saveChanges();
+        }
+	});
+	
+	
+	</script>
+	
+	<div id="dialog"></div>
+	<div id="page-content">
+	    <div style="clear:both">
+        	<div id="grid"></div>
+   		</div>
+	</div>
+
+	<script>
+	
+	kendo.bind($('#page-content'), viewModel);
+
+
+	dataSource = new kendo.data.DataSource(
+                {
+                    transport: {
+                        read: {
+                            url: '${base.contextPath}/web/config/query',
+                            type: "GET",
+                            dataType: "json"
+                        },
+                        update      : {
+                            url        :"${base.contextPath}/web/config/update",
+                            contentType: "application/json",
+                            type       : "POST"
+                        },
+                        parameterMap: function (options, type) {
+                        	if (type !== "read" && options.models) {
+                                var datas = HTed.prepareSubmitParameter(options, type);
+                                return kendo.stringify(datas);
+                            } else if (type === "read") {
+                                return HTed.prepareQueryParameter(viewModel.model.toJSON(), options);
+                            }
+                        }
+                    },
+                    batch: true,
+                    serverPaging: true,
+                    pageSize: 10,
+                    schema: {
+                        data: 'rows',
+                        total: 'total',
+                        model: {
+                            id: "configId",
+                            fields:{}
+                        }
+                    }
+});
+
+var grid = $("#grid").kendoGrid({
+    dataSource: dataSource,
+    toolbar: [
+        {
+            template: '<span class="btn btn-success" onclick=" viewModel.saveFunction()">保存</span> '
+        }
+    ],
+    navigatable: false,
+    resizable: true,
+    scrollable: true,
+    editable: false,
+    rownumber: false,
+    columns: [
+        {field: "configCommit", title: 'key', width: 80},
+        {
+        	field: "configValue",
+			title: '值', 
+			width: 80
+        }
+    ],
+    editable   : true
+}).data("kendoGrid");
+
+HTed.autoResizeGrid("#grid"); 
+</script>
+
+</body>

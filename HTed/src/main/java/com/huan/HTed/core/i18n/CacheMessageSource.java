@@ -20,8 +20,8 @@ public class CacheMessageSource extends AbstractMessageSource {
     private static final String DOUBLE_QUOTES_REPLACEMENT = "&#34;";
 
     @Autowired
-    @Qualifier("promptCache")
-    private HashStringRedisCache<String> promptCache;
+    @Qualifier("configCache")
+    private HashStringRedisCache<String> configCache;
 
     public CacheMessageSource() {
         reload();
@@ -38,7 +38,7 @@ public class CacheMessageSource extends AbstractMessageSource {
     @Override
     protected String resolveCodeWithoutArguments(String code, Locale locale) {
         String code2 = StringUtils.lowerCase(code);
-        String pmt = promptCache.getValue(code2 + "." + locale);
+        String pmt = configCache.getValue(code2 + "." + locale);
         if (pmt == null) {
             return StringUtils.contains(code, ".") ? StringUtils.substringAfterLast(code, ".") : code;
         }

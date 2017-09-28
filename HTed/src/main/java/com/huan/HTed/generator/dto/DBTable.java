@@ -3,10 +3,11 @@ package com.huan.HTed.generator.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class DBTable {
     private String name;
     private List<DBColumn> columns;
-    private boolean isMultiLanguage=false;
+    private boolean isMultiLanguage = false;
 
     public DBTable() {
         columns = new ArrayList<DBColumn>();
