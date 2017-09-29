@@ -72,4 +72,17 @@ public class LoginController extends BaseController {
                                             final HttpServletResponse response) throws BaseException {
         return getLoginAdaptor().sessionExpiredLogin(account, request, response);
     }
+    
+    
+    /**
+     * 退出登录
+     *
+     * @param request HttpServletRequest
+     * @param response HttpServletResponse
+     * @return view
+     */
+    @RequestMapping(value ="/logout")
+    public ModelAndView logout(final HttpServletRequest request, final HttpServletResponse response) {
+    	return new ModelAndView("forward:/login");
+    }
 }

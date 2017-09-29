@@ -1,9 +1,9 @@
 
 package com.huan.HTed.adaptor.impl;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.util.WebUtils;
 
 import com.huan.HTed.account.dto.User;
 import com.huan.HTed.account.exception.UserException;
@@ -24,6 +25,7 @@ import com.huan.HTed.account.service.IUserService;
 import com.huan.HTed.adaptor.ILoginAdaptor;
 import com.huan.HTed.core.BaseConstants;
 import com.huan.HTed.core.IRequest;
+import com.huan.HTed.core.components.RedisUtil;
 import com.huan.HTed.core.exception.BaseException;
 import com.huan.HTed.core.impl.RequestHelper;
 import com.huan.HTed.core.util.TimeZoneUtil;
@@ -263,8 +265,15 @@ public class DefaultLoginAdaptor implements ILoginAdaptor {
         }
         ModelAndView view = new ModelAndView(getLoginView(request));
         // 配置3次以后开启验证码
-        /*   Cookie cookie =WebUtils.getCookie(request, CaptchaConfig.LOGIN_KEY);
-        if(captchaConfig.getWrongTimes() >0){
+          Cookie cookie =WebUtils.getCookie(request, RedisUtil.LOGIN_KEY);
+          if(cookie==null){
+        	  String uuid =UUID.randomUUID().toString();
+              cookie = new Cookie(RedisUtil.LOGIN_KEY, uuid);
+              cookie.setPath(StringUtils.defaultIfEmpty(request.getContextPath(), "/"));
+              response.addCookie(cookie);
+          }
+         
+          /* if(captchaConfig.getWrongTimes() >0){
             if(cookie == null){
                String uuid =UUID.randomUUID().toString();
                cookie = new Cookie(CaptchaConfig.LOGIN_KEY, uuid);
