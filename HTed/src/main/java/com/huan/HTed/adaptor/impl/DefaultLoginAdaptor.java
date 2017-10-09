@@ -217,23 +217,23 @@ public class DefaultLoginAdaptor implements ILoginAdaptor {
 
     @Override
     public ModelAndView indexView(HttpServletRequest request, HttpServletResponse response) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            // 获取user
-            Long userId = (Long) session.getAttribute(User.FIELD_USER_ID);
-            if (userId != null ) {
-                if(session.getAttribute(User.PASSWORD_EXPIRE_VERIFY) !=null){
-                    User user = new User();
-                    user.setUserId(userId);
-                    user = userService.selectByPrimaryKey(RequestHelper.createServiceRequest(request), user);
-                    ModelAndView mv = new ModelAndView(getUpdatePwdView(request));
-                    mv.addObject("user", user);
-                    return mv;
-                }
-            }else {
-                return new ModelAndView(REDIRECT + getLoginView(request));
-            }
-        }
+//        HttpSession session = request.getSession(false);
+//        if (session != null) {
+//            // 获取user
+//            Long userId = (Long) session.getAttribute(User.FIELD_USER_ID);
+//            if (userId != null ) {
+//                if(session.getAttribute(User.PASSWORD_EXPIRE_VERIFY) !=null){
+//                    User user = new User();
+//                    user.setUserId(userId);
+//                    user = userService.selectByPrimaryKey(RequestHelper.createServiceRequest(request), user);
+//                    ModelAndView mv = new ModelAndView(getUpdatePwdView(request));
+//                    mv.addObject("user", user);
+//                    return mv;
+//                }
+//            }else {
+//                return new ModelAndView(REDIRECT + getLoginView(request));
+//            }
+//        }
         
         String sysTitle = "cado";
         ModelAndView mav =  indexModelAndView(request, response);

@@ -1,11 +1,10 @@
 <#include "../../include/header.html">
 <body>
 <script>
-	var typeId = ${RequestParameters.typeId!0};
-	
+	var catalogId = ${RequestParameters.catalogId!0};
 	var  viewModel = kendo.observable({
 	    model: {
-	    	typeId:typeId
+	    	catalogId:catalogId
 	    },
 	    saveFunction: function(){
 	    	 $("#grid2").data('kendoGrid').saveChanges();
@@ -17,14 +16,14 @@
 	        	  var data = [];
 	        	  $.each(checked, function (k, v) {
 	        		  data.push({
-	        			  			cardId:checked[k].cardId,
-	        			  			typeId:typeId,
+	        			  			typeId:checked[k].typeId,
+	        			  			catalogId:catalogId,
 	        			  			__status:"add"
 	        				  });
                   });
 	        	  $.ajax({
 		                type   : 'POST',
-		                url    : '${base.contextPath}/type/card/detail/submit',
+		                url    : '${base.contextPath}/catalog/type/detail/submit',
 		                dataType : "json",
 		                contentType : "application/json",
 		                data   : kendo.stringify(data),
@@ -48,14 +47,14 @@
 	        	  var data = [];
 	        	  $.each(checked, function (k, v) {
 	        		  data.push({
-	        			  			cardId:checked[k].cardId,
-	        			  			typeId:typeId,
+	        			  			typeId:checked[k].typeId,
+	        			  			catalogId:catalogId,
 	        			  			__status:"delete"
 	        				  });
                   });
 	        	  $.ajax({
 		                type   : 'POST',
-		                url    : '${base.contextPath}/type/card/detail/submit',
+		                url    : '${base.contextPath}/catalog/type/detail/submit',
 		                dataType : "json",
 		                contentType : "application/json",
 		                data   : kendo.stringify(data),
@@ -75,13 +74,13 @@
 	});
 	
 </script>
-<div class="container" style="padding-top: 15px;">
+<div class="container" style="padding-top: 20px;">
 	<div id="page-content">
 		<div class="row">
 			<div class="col-sm-5">
 				<div id="grid1" style="margin-left: 10px"></div>
 			</div>
-			<div class="col-sm-2 text-center " style="margin-top:250px">
+			<div class="col-sm-2 text-center"  style="margin-top:120px">
 				<div class="row"><span  class="btn btn-success" onclick=" viewModel.toRight()" > 添加 </span></div>
 				<div class="row">&nbsp;</div>
 				<div class="row"><span  class="btn btn-success" onclick=" viewModel.toLeft()" > 删除 </span></div>
@@ -100,7 +99,7 @@
             {
                 transport: {
                     read: {
-                        url: '${base.contextPath}/type/card/detail/queryNotHave',
+                        url: '${base.contextPath}/catalog/type/detail/queryNotHave',
                         type: "GET",
                         dataType: "json"
                     },
@@ -119,7 +118,7 @@
                     data: 'rows',
                     total: 'total',
                     model: {
-                        id: "cardId",
+                        id: "typeId",
                         fields:{}
                     }
                 }
@@ -127,7 +126,7 @@
 		
 		var grid1 = $("#grid1").kendoGrid({
 		dataSource: dataSource1,
-		height: 580,
+		height:280,
 		navigatable: false,
 		resizable: true,
 		scrollable: true,
@@ -135,14 +134,7 @@
 		rownumber: false,
 		selectable:"multiple,rowbox",
 		columns: [
-			 {field: "cardName", title: '卡片名称', width: 80},
-		        {
-		            title: '卡片地址',
-		            width: 80,
-		            template: function(dataItem){
-		            	return "<span><img src='"+dataItem.cardImagePath+"' width=\"150px\" height=\"100px\"/></span>" ;
-		            }
-		        }
+			 {field: "typeName", title: '大类名称', width: 80},
 		]
 		}).data("kendoGrid");
 		
@@ -153,12 +145,12 @@
 	            {
 	                transport: {
 	                    read: {
-	                        url: '${base.contextPath}/type/card/detail/queryHave',
+	                        url: '${base.contextPath}/catalog/type/detail/queryHave',
 	                        type: "GET",
 	                        dataType: "json"
 	                    },
 	                    update      : {
-                            url        :"${base.contextPath}/type/card/detail/submit",
+                            url        :"${base.contextPath}/catalog/type/detail/submit",
                             contentType: "application/json",
                             type       : "POST"
                         },
@@ -177,7 +169,7 @@
 	                    data: 'rows',
 	                    total: 'total',
 	                    model: {
-	                        id: "cardId",
+	                        id: "catalogId",
 	                        fields:{
 	                        	orders:{type:"number",validation: { required: true,min:0}},
 	                        }
@@ -187,35 +179,28 @@
 			
 			var grid2 = $("#grid2").kendoGrid({
 			dataSource: dataSource2,
-			height: 580,
+			height: 280,
 			navigatable: false,
 			resizable: true,
 			scrollable: true,
+			editable: true,
 			rownumber: false,
 			selectable:"multiple,rowbox",
 			toolbar: [
-			        {
-			            template: '<span class="btn btn-success" onclick=" viewModel.saveFunction()">修改</span> '
-			        }
+		        {
+		            template: '<span class="btn btn-success" onclick=" viewModel.saveFunction()">修改</span> '
+		        }
 			],
 			columns: [
-				 { 
-					 title: '卡片名称', 
+				{ 
+					 title: '大类名称', 
 					 width: 80 ,
 					 template:function(dataItem){
-						 return "<span>"+dataItem.card.cardName+"</span>" ;
+						 return "<span>"+dataItem.type.typeName+"</span>" ;
 					 }
 				 },
-		         {
-		            title: '卡片地址',
-		            width: 80,
-		            template: function(dataItem){
-		            	return "<span><img src='"+dataItem.card.cardImagePath+"' width=\"150px\" height=\"100px\"/></span>" ;
-		            }
-		         },
-		         {field: "orders", title: '排序', width: 80},
-			],
-			editable   : true
+				 {field: "orders", title: '排序', width: 80}
+			]
 			}).data("kendoGrid");
 			
 </script>

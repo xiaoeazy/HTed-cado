@@ -1,13 +1,18 @@
 package com.huan.HTed.cado.dto;
 
 
+import java.util.List;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import com.huan.HTed.mybatis.annotation.ExtensionAttribute;
-import org.hibernate.validator.constraints.Length;
 import javax.persistence.Table;
-import com.huan.HTed.system.dto.BaseDTO;
+import javax.persistence.Transient;
+
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.huan.HTed.mybatis.annotation.ExtensionAttribute;
+import com.huan.HTed.system.dto.BaseDTO;
 @ExtensionAttribute(disable=true)
 @Table(name = "cado_type")
 public class Type extends BaseDTO {
@@ -23,9 +28,21 @@ public class Type extends BaseDTO {
      @NotEmpty
      @Length(max = 45)
      private String typeName;
+     
+     @Transient
+     private List<Card> cardList;
 
+     
 
-     public void setTypeId(Long typeId){
+     public List<Card> getCardList() {
+		return cardList;
+	}
+
+	 public void setCardList(List<Card> cardList) {
+		this.cardList = cardList;
+	}
+
+	 public void setTypeId(Long typeId){
          this.typeId = typeId;
      }
 

@@ -60,12 +60,15 @@ public class MonitorInterceptor extends HandlerInterceptorAdapter {
         		needPermission= false;
         		validateUser(request,response);
         	}
-        	if(needPermission){
-            	request.
-            	getRequestDispatcher("/login").
-            	forward(request,response);  
-            	return false;
+        	if(path.endsWith("/api/")){
+        		needPermission= false;
         	}
+//        	if(needPermission){
+//            	request.
+//            	getRequestDispatcher("/login").
+//            	forward(request,response);  
+//            	return false;
+//        	}
         }
 //        SecurityTokenInterceptor.LOCAL_SECURITY_KEY.set(TokenUtils.getSecurityKey(session));待定
         return true;
